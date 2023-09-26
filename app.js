@@ -1,10 +1,10 @@
-const todoInput = document.querySelector('todo-input')
-const todoButton = document.querySelector('todo-button')
-const todoList = document.querySelector('todo-list')
+const todoInput = document.querySelector('.todo-input')
+const todoButton = document.querySelector('.todo-button')
+const todoList = document.querySelector('.todo-list')
 
 
 todoButton.addEventListener('click', addTodo)
-
+todoList.addEventListener('click', deleteCheck)
 
 function addTodo(event) {
 
@@ -19,12 +19,12 @@ function addTodo(event) {
     todoDiv.appendChild(newTodo)
 
     const completeButton = document.createElement('button')
-    completeButton.innerText = '<i class="fas fa-check"></i>'
+    completeButton.innerHTML = '<i class="fas fa-check"></i>'
     completeButton.classList.add("complete-btn")
     todoDiv.appendChild(completeButton)
 
     const trashButton = document.createElement('button')
-    trashButton.innerText = '<i class="fas fa-trash"></i>'
+    trashButton.innerHTML = '<i class="fas fa-trash"></i>'
     trashButton.classList.add("trash-btn")
     todoDiv.appendChild(trashButton)
 
@@ -32,3 +32,16 @@ function addTodo(event) {
 
     todoInput.value = ''
 } 
+
+function deleteCheck(e) {
+    const item = e.target
+    if (item.classList[0] === 'trash-btn') {
+        const todo = item.parentElement
+        todo.remove()
+    }
+
+    if (item.classList[0] === 'complete-btn') {
+        const todo = item.parentElement
+        todo.classList.toggle('completed')
+    }
+}

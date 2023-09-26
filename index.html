@@ -3,13 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
     <link rel="stylesheet" href="style.css" />
-    <script src="app.js"></script>
+    <script src="app.js" defer></script>
     <title>Todo List</title>
   </head>
   <body>
     <header>
-      <h1>Ed's Todo List</h1>
+      <h1>Todo List</h1>
     </header>
     <form>
       <input type="text" class="todo-input" />
@@ -18,13 +22,9 @@
       </button>
     </form>
     <div class="todo-container">
-      <ul class="todo-list">
-        <div class="todo">
-          <li></li>
-          <button>delete</button>
-          <button>Checked</button>
-        </div>
-      </ul>
+      <div class="todo">
+        <ul class="todo-list"></ul>
+      </div>
     </div>
   </body>
 </html>
