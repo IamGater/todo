@@ -12,6 +12,11 @@ function addTodo(event) {
 
     event.preventDefault()
 
+    if (todoInput.value === '') {
+        todoInput.placeholder = 'input text'
+        return
+    }
+
     const todoDiv = document.createElement('div')
     todoDiv.classList.add('todo', 'uncompleted')
 
@@ -33,6 +38,7 @@ function addTodo(event) {
     todoList.appendChild(todoDiv)
 
     todoInput.value = ''
+    todoInput.placeholder = ''
 } 
 
 function deleteCheck(e) {
