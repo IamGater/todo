@@ -128,7 +128,8 @@ form {
 }
 
 .trash-btn,
-.complete-btn {
+.complete-btn,
+.edit-btn {
   border: none;
   padding: 0.9rem 1rem;
   cursor: pointer;
@@ -147,14 +148,28 @@ form {
   color: white;
 }
 
+.edit-btn {
+  background: #f0ad4e;
+  color: white;
+}
+
 .trash-btn:hover,
-.complete-btn:hover {
+.complete-btn:hover,
+.edit-btn:hover {
   opacity: 0.9;
 }
 
 .fa-trash,
-.fa-check {
+.fa-check,
+.fa-edit {
   pointer-events: none;
+}
+
+.todo-item[contenteditable="true"] {
+  outline: none;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 6px;
+  padding-left: 0.4rem;
 }
 
 .completed {

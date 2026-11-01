@@ -24,12 +24,23 @@ const createDiv = (value, completed = false) => {
     completeButton.classList.add('complete-btn')
     todoDiv.appendChild(completeButton)
 
+    const editButton = document.createElement('button')
+    editButton.innerHTML = '<i class="fas fa-edit"></i>'
+    editButton.classList.add('edit-btn')
+    editButton.addEventListener('mousedown', (e) => e.preventDefault())
+    todoDiv.appendChild(editButton)
+
     const trashButton = document.createElement('button')
     trashButton.innerHTML = '<i class="fas fa-trash"></i>'
     trashButton.classList.add('trash-btn')
     todoDiv.appendChild(trashButton)
 
-    todoList.appendChild(todoDiv)
+    const firstCompleted = todoList.querySelector('.completed')
+    if (!completed && firstCompleted) {
+        todoList.insertBefore(todoDiv, firstCompleted)
+    } else {
+        todoList.appendChild(todoDiv)
+    }
 }
 
 function addTodo(event) {
@@ -62,20 +73,65 @@ function deleteCheck(e) {
         })
     }
 
+    if (item.classList[0] === 'edit-btn') {
+        const todo = item.parentElement
+        const todoItem = todo.firstChild
+
+        if (todoItem.isContentEditable) {
+            todoItem.blur()
+            return
+        }
+
+        const oldText = todoItem.innerText
+        todoItem.contentEditable = true
+        todoItem.focus()
+        window.getSelection().selectAllChildren(todoItem)
+        window.getSelection().collapseToEnd()
+
+        todoItem.onkeydown = function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault()
+                todoItem.blur()
+            }
+        }
+
+        todoItem.addEventListener('blur', function () {
+            todoItem.contentEditable = false
+            const newText = todoItem.innerText.trim()
+            if (newText === '') {
+                todoItem.innerText = oldText
+            } else {
+                todoItem.innerText = newText
+                editLocalTodos(oldText, newText)
+            }
+        }, { once: true })
+    }
+
     if (item.classList[0] === 'complete-btn') {
         const todo = item.parentElement
         const text = todo.firstChild.innerText
-        const todos = JSON.parse(localStorage.getItem('todos') || '[]')
+        let todos = JSON.parse(localStorage.getItem('todos') || '[]')
 
-        todos.forEach(function (item) {
+        todos = todos.map(function (item) {
+            if (typeof item === 'string') {
+                item = { text: item, completed: false }
+            }
             if (item.text === text) {
                 item.completed = !item.completed
             }
+            return item
         })
 
         localStorage.setItem('todos', JSON.stringify(todos))
         todo.classList.toggle('completed')
         todo.classList.toggle('uncompleted')
+
+        if (todo.classList.contains('completed')) {
+            todoList.appendChild(todo)
+        } else {
+            const firstCompleted = todoList.querySelector('.completed')
+            todoList.insertBefore(todo, firstCompleted)
+        }
     }
 }
 
@@ -128,7 +184,29 @@ function removeLocalTodos(todo) {
         todos = JSON.parse(localStorage.getItem('todos'))
     }
 
-    todos = todos.filter((item) => item.text !== text)
+    todos = todos.filter((item) => (typeof item === 'string' ? item : item.text) !== text)
+    localStorage.setItem('todos', JSON.stringify(todos))
+}
+
+function editLocalTodos(oldText, newText) {
+    let todos
+
+    if (localStorage.getItem('todos') === null) {
+        todos = []
+    } else {
+        todos = JSON.parse(localStorage.getItem('todos'))
+    }
+
+    todos = todos.map(function (item) {
+        if (typeof item === 'string') {
+            item = { text: item, completed: false }
+        }
+        if (item.text === oldText) {
+            item.text = newText
+        }
+        return item
+    })
+
     localStorage.setItem('todos', JSON.stringify(todos))
 }
 
@@ -139,11 +217,12 @@ function getTodos() {
     } else {
         todos = JSON.parse(localStorage.getItem('todos'))
     }
+    todos = todos.map(function (todo) {
+        return typeof todo === 'string' ? { text: todo, completed: false } : todo
+    })
+    localStorage.setItem('todos', JSON.stringify(todos))
+
     todos.forEach(function (todo) {
-        if (typeof todo === 'string') {
-            createDiv(todo, false)
-        } else {
-            createDiv(todo.text, todo.completed)
-        }
+        createDiv(todo.text, todo.completed)
     })
  }
